@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>API REST con Express.js</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+  <div class="container">
+    <h1>"Agrega Tu nuevo usuario para navegar">
+        <h2>By santiago leiva>
+
+    <h2>Lista de usuarios</h2>
+    <ul id="user-list"></ul>
+
+    <h2>Agregar usuario</h2>
+    <form id="add-user-form">
+      <div class="form-group">
+        <label for="name">Nombre:</label>
+        <input type="text" class="form-control" id="name" required>
+      </div>
+      <button type="submit" class="btn btn-primary">Agregar</button>
+    </form>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script>
+    // Función para cargar la lista de usuarios
+    function loadUsers() {
+      axios.get('http://localhost:3000/users')
+        .then(response => {
+          const userList = document.getElementById('user-list');
+          userList.innerHTML = '';
+
+          response.data.forEach(user => {
+            const listItem = document.createElement('li');
+            listItem.textContent = user.name;
+            userList.appendChild(listItem);
+          });
+        })
+        .catch(error => {
+          console.error(error);
+        });
+    }
+
+    // Función para agregar un nuevo usuario
+    function addUser(event) {
+      event.preventDefault();
+
+      const nameInput = document.getElementById('name');
+      const name = nameInput.value;
+
+      axios.post('http://localhost:3000/users', { name })
+        .then(response => {
+          nameInput.value = '';
+          loadUsers();
+        })
+        .catch(error => {
+          console.error(error);
+        });
+    }
+
+    // Evento para agregar usuario
+    const addUserForm = document.getElementById('add-user-form');
+    addUserForm.addEventListener('submit', addUser);
+
+    // Cargar la lista de usuarios al cargar la página
+    loadUsers();
+  </script>
+</body>
+</html>
